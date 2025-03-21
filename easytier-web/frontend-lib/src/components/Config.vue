@@ -65,7 +65,7 @@ const publicServerSuggestions = ref([''])
 
 function searchPresetPublicServers(e: { query: string }) {
   const presetPublicServers = [
-    'tcp://public.easytier.top:11010',
+    'tcp://easytier.1-h.cc:11010',
   ]
 
   const query = e.query
@@ -237,7 +237,7 @@ const portForwardProtocolOptions = ref(["tcp", "udp"]);
 
           <Divider />
 
-          <Panel :header="t('advanced_settings')" toggleable collapsed>
+          <Panel :header="t('advanced_settings')">
             <div class="flex flex-col gap-y-2">
 
               <div class="flex flex-row gap-x-9 flex-wrap">

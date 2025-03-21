@@ -87,7 +87,7 @@ export function DEFAULT_NETWORK_CONFIG(): NetworkConfig {
 
     networking_method: NetworkingMethod.PublicServer,
 
-    public_server_url: 'tcp://public.easytier.top:11010',
+    public_server_url: 'tcp://easytier.1-h.cc:11010',
     peer_urls: [],
 
     proxy_cidrs: [],

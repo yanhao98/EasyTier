@@ -1,3 +1,3 @@
 window.apiMeta = {
-    api_host: "https://config-server.easytier.cn"
+    api_host: "https://easytier-config-server.1-h.cc"
 }

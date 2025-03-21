@@ -42,7 +42,7 @@ const deviceCount = computed<number | undefined>(
 </script>
 
 <template>
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         <Card class="h-full">
             <template #title>Device Count</template>
             <template #content>
@@ -61,5 +61,4 @@ const deviceCount = computed<number | undefined>(
             </p>
         </div>
     </div>
-
 </template>
