@@ -1,0 +1,67 @@
+name: _打包镜像-web-frontend
+on:
+  push:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    env:
+      # https://github.com/docker/metadata-action/tree/v5/?tab=readme-ov-file#semver
+      # Event: push,     Ref: refs/head/main,       Tags: main
+      # Event: push tag, Ref: refs/tags/v1.2.3,     Tags: 1.2.3, 1.2, 1, latest
+      # Event: push tag, Ref: refs/tags/v2.0.8-rc1, Tags: 2.0.8-rc1
+      metadata-action-tags: |
+        type=ref,event=branch
+        type=semver,pattern={{version}}
+        type=semver,pattern={{major}}.{{minor}}
+        type=semver,pattern={{major}}
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: yanhao98/composite-actions/setup-node-environment@main
+      - run: pnpm -r build
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate Dockerfile
+        run: |
+          cat <<EOF > Dockerfile.generated
+          # syntax=docker/dockerfile:1.14-labs
+          FROM caddy:2
+
+          COPY <<EOT /etc/caddy/Caddyfile
+          :80 {
+          	handle {
+          		root * /usr/share/caddy
+          		file_server
+          	}
+          }
+          EOT
+
+          COPY easytier-web/frontend/dist /usr/share/caddy
+          EOF
+          set -x
+          cat Dockerfile.generated
+      - uses: yanhao98/composite-actions/docker-build-push@main
+        id: docker-build-push
+        with:
+          context: .
+          file: Dockerfile.generated
+          platforms: linux/amd64,linux/arm64
+          push: true
+          load: false
+          meta_images: |
+            ghcr.io/${{ github.repository }}-web-frontend
+          meta_tags: ${{ env.metadata-action-tags }}
+          cache-from: type=gha,scope=easytier-web
+          cache-to: type=gha,mode=max,scope=easytier-web
